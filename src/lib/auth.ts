@@ -9,6 +9,7 @@ declare module "next-auth" {
         id: string;
         username: string;
         name: string;
+        image?: string | null;
     }
     interface Session {
         user: User;
@@ -29,7 +30,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 }
 
                 const user = await queryOne<DBUser>(
-                    "SELECT id, username, password_hash, name FROM users WHERE username = $1",
+                    "SELECT id, username, password_hash, name, image_url FROM users WHERE username = $1",
                     [credentials.username]
                 );
 
@@ -50,6 +51,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     id: String(user.id),
                     username: user.username,
                     name: user.name,
+                    image: user.image_url,
                 };
             },
         }),
@@ -60,6 +62,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 token.id = user.id;
                 token.username = user.username;
                 token.name = user.name;
+                token.image = (user as any).image;
             }
             return token;
         },
@@ -68,6 +71,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 session.user.id = token.id as string;
                 session.user.username = token.username as string;
                 session.user.name = token.name as string;
+                session.user.image = token.image as string;
             }
             return session;
         },

@@ -10,14 +10,16 @@ import {
     LogOut,
     Sparkles,
     Settings,
+    User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const navItems = [
     { href: "/dashboard", label: "Beranda", icon: Home },
     { href: "/dashboard/laporan", label: "Catatan", icon: CalendarDays },
     { href: "/dashboard/laporan/new", label: "Tulis Baru", icon: PenLine },
+    { href: "/dashboard/profile", label: "Profil Sayang", icon: User },
 ];
 
 export function Sidebar() {
@@ -83,7 +85,25 @@ export function Sidebar() {
                 </nav>
 
                 {/* Bottom Actions */}
-                <div className="px-4 py-4 border-t border-sky-50 space-y-1">
+                <div className="px-4 py-4 border-t border-sky-50 space-y-2">
+                    <Link
+                        href="/dashboard/profile"
+                        className="flex items-center gap-3 p-3 rounded-xl bg-sky-50 hover:bg-sky-100 transition-all border border-sky-100 group"
+                    >
+                        <Avatar className="h-9 w-9 ring-2 ring-white">
+                            <AvatarImage src={session?.user?.image || ""} className="object-cover" />
+                            <AvatarFallback className="bg-gradient-to-br from-sky-400 to-blue-500 text-white text-xs">
+                                {firstName.charAt(0)}
+                            </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-sky-800 truncate">
+                                {session?.user?.name || "User"}
+                            </p>
+                            <p className="text-[10px] text-sky-400 group-hover:text-sky-600 transition-colors">Edit Profil ✨</p>
+                        </div>
+                    </Link>
+
                     <button
                         onClick={() => signOut({ callbackUrl: "/login" })}
                         className="flex w-full items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-sky-400 hover:bg-sky-50 hover:text-sky-600 transition-all"

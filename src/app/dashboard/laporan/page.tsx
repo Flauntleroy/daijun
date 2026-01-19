@@ -40,6 +40,14 @@ import { getLaporanList, getAllLaporanForExport, deleteLaporan } from "@/app/act
 import { exportToCSV, exportToPDF } from "@/lib/export";
 import type { LaporanHarian, LaporanFilter } from "@/types";
 
+const moodEmojis: Record<string, string> = {
+    happy: "😊",
+    productive: "💪",
+    tired: "😴",
+    grateful: "😇",
+    stressed: "🤯",
+};
+
 export default function LaporanListPage() {
     const router = useRouter();
     const [data, setData] = useState<LaporanHarian[]>([]);
@@ -177,9 +185,12 @@ export default function LaporanListPage() {
                                 <CardContent className="p-4">
                                     <div className="flex items-start justify-between gap-3">
                                         <div className="flex-1 min-w-0">
-                                            <p className="font-medium text-sky-800 truncate">
-                                                {item.nama_kegiatan}
-                                            </p>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-lg">{item.mood ? moodEmojis[item.mood] : "😊"}</span>
+                                                <p className="font-medium text-sky-800 truncate">
+                                                    {item.nama_kegiatan}
+                                                </p>
+                                            </div>
                                             <p className="text-xs text-sky-400 mt-1">
                                                 {format(new Date(item.tanggal), "EEEE, dd MMM yyyy", { locale: id })}
                                             </p>
@@ -259,7 +270,10 @@ export default function LaporanListPage() {
 
                                                     {/* Content */}
                                                     <div className="flex-1 min-w-0">
-                                                        <p className="font-medium text-sky-800">{item.nama_kegiatan}</p>
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="text-lg">{item.mood ? moodEmojis[item.mood] : "😊"}</span>
+                                                            <p className="font-medium text-sky-800">{item.nama_kegiatan}</p>
+                                                        </div>
                                                         {item.hasil && (
                                                             <p className="text-sm text-sky-600 mt-1 line-clamp-2">{item.hasil}</p>
                                                         )}

@@ -4,9 +4,9 @@ import { hash } from "bcryptjs";
 import { sql } from "@vercel/postgres";
 
 export async function seedDatabase() {
-    try {
-        // Create tables if not exists
-        await sql`
+  try {
+    // Create tables if not exists
+    await sql`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
         username VARCHAR(100) UNIQUE NOT NULL,
@@ -16,7 +16,7 @@ export async function seedDatabase() {
       )
     `;
 
-        await sql`
+    await sql`
       CREATE TABLE IF NOT EXISTS laporan_harian (
         id SERIAL PRIMARY KEY,
         user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
@@ -28,6 +28,7 @@ export async function seedDatabase() {
         volume DECIMAL(10,2),
         satuan VARCHAR(50),
         hasil TEXT,
+        mood VARCHAR(50),
         file_url VARCHAR(1000),
         file_name VARCHAR(255),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -35,22 +36,29 @@ export async function seedDatabase() {
       )
     `;
 
-        // Create indexes
-        await sql`CREATE INDEX IF NOT EXISTS idx_laporan_tanggal ON laporan_harian(tanggal)`;
-        await sql`CREATE INDEX IF NOT EXISTS idx_laporan_user ON laporan_harian(user_id)`;
+    // Ensure mood column exists for existing tables
+    try {
+      await sql`ALTER TABLE laporan_harian ADD COLUMN IF NOT EXISTS mood VARCHAR(50)`;
+    } catch (e) {
+      console.log("Mood column might already exist");
+    }
 
-        // Create default admin user with hashed password
-        const passwordHash = await hash("admin123", 10);
+    // Create indexes
+    await sql`CREATE INDEX IF NOT EXISTS idx_laporan_tanggal ON laporan_harian(tanggal)`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_laporan_user ON laporan_harian(user_id)`;
 
-        await sql`
+    // Create default admin user with hashed password
+    const passwordHash = await hash("admin123", 10);
+
+    await sql`
       INSERT INTO users (username, password_hash, name) 
       VALUES ('admin', ${passwordHash}, 'Administrator')
       ON CONFLICT (username) DO NOTHING
     `;
 
-        return { success: true, message: "Database seeded successfully" };
-    } catch (error) {
-        console.error("Seed database error:", error);
-        return { error: "Failed to seed database" };
-    }
+    return { success: true, message: "Database seeded successfully" };
+  } catch (error) {
+    console.error("Seed database error:", error);
+    return { error: "Failed to seed database" };
+  }
 }

@@ -15,13 +15,30 @@ import {
     isToday,
 } from "date-fns";
 import { id } from "date-fns/locale";
-import { ChevronLeft, ChevronRight, Plus, BookOpen, Clock, TrendingUp, Edit, ExternalLink } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, BookOpen, Clock, TrendingUp, Edit, ExternalLink, Heart, Sparkles as SparklesIcon, Droplets, Wind, Coffee } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { getLaporanList } from "@/app/actions/laporan";
 import type { LaporanHarian } from "@/types";
+import { SparklesBackground } from "@/components/ui/sparkles-background";
+
+const selfCareTips = [
+    { text: "Jangan lupa minum air putih hari ini ya, Sayang! 💧", icon: Droplets, color: "text-blue-400" },
+    { text: "Ambil napas dalam-dalam, kamu sudah hebat! ✨", icon: Wind, color: "text-sky-400" },
+    { text: "Istirahat sejenak kalau sudah capek ya manis... ☕", icon: Coffee, color: "text-amber-400" },
+    { text: "Kamu itu berharga banget, jangan lupa tersenyum! 😊", icon: Heart, color: "text-rose-400" },
+    { text: "Peregangan sebentar yuk biar badannya enak! 🧘‍♀️", icon: SparklesIcon, color: "text-emerald-400" },
+];
+
+const moodEmojis: Record<string, string> = {
+    happy: "😊",
+    productive: "💪",
+    tired: "😴",
+    grateful: "😇",
+    stressed: "🤯",
+};
 
 export default function DashboardPage() {
     const router = useRouter();
@@ -29,6 +46,8 @@ export default function DashboardPage() {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [laporanData, setLaporanData] = useState<LaporanHarian[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [streak, setStreak] = useState(0);
+    const [tip, setTip] = useState(selfCareTips[0]);
 
     const monthStart = startOfMonth(currentMonth);
     const monthEnd = endOfMonth(currentMonth);
@@ -43,11 +62,44 @@ export default function DashboardPage() {
             const result = await getLaporanList({ startDate, endDate, limit: 100 });
             if (!result.error) {
                 setLaporanData(result.data);
+                calculateStreak(result.data);
             }
             setIsLoading(false);
+            setTip(selfCareTips[Math.floor(Math.random() * selfCareTips.length)]);
         }
         fetchData();
     }, [currentMonth]);
+
+    function calculateStreak(data: LaporanHarian[]) {
+        if (data.length === 0) {
+            setStreak(0);
+            return;
+        }
+
+        // Get unique dates with entries, sorted descending
+        const uniqueDates = Array.from(new Set(data.map(l => format(new Date(l.tanggal), "yyyy-MM-dd"))))
+            .sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+
+        let currentStreak = 0;
+        let checkDate = new Date();
+
+        // If no entry today, check if there was one yesterday to continue streak
+        const todayStr = format(new Date(), "yyyy-MM-dd");
+        if (uniqueDates[0] !== todayStr) {
+            checkDate.setDate(checkDate.getDate() - 1);
+        }
+
+        for (let i = 0; i < uniqueDates.length; i++) {
+            const dateStr = format(checkDate, "yyyy-MM-dd");
+            if (uniqueDates.includes(dateStr)) {
+                currentStreak++;
+                checkDate.setDate(checkDate.getDate() - 1);
+            } else {
+                break;
+            }
+        }
+        setStreak(currentStreak);
+    }
 
     function getLaporanForDate(date: Date): LaporanHarian[] {
         return laporanData.filter((l) => isSameDay(new Date(l.tanggal), date));
@@ -68,11 +120,25 @@ export default function DashboardPage() {
     const todayCount = getLaporanForDate(new Date()).length;
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 relative z-10">
+            <SparklesBackground />
+
             {/* Desktop: Two Column Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Left Column - Calendar (Takes 2 cols on desktop) */}
                 <div className="lg:col-span-2 space-y-6">
+                    {/* Self Care Widget */}
+                    <Card className="border-0 shadow-lg shadow-sky-100 bg-white/60 backdrop-blur-md rounded-3xl overflow-hidden animate-in fade-in slide-in-from-top-4 duration-700">
+                        <CardContent className="p-4 md:p-6 flex items-center gap-4">
+                            <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 bg-white shadow-sm", tip.color)}>
+                                <tip.icon className="h-6 w-6" />
+                            </div>
+                            <p className="text-sky-800 font-medium text-sm md:text-base italic">
+                                "{tip.text}"
+                            </p>
+                        </CardContent>
+                    </Card>
+
                     {/* Calendar Card */}
                     <Card className="border-0 shadow-lg shadow-sky-100 bg-white rounded-3xl overflow-hidden">
                         <CardContent className="p-4 md:p-6">
@@ -177,12 +243,12 @@ export default function DashboardPage() {
 
                         <Card className="border-0 shadow-md shadow-sky-50 bg-white rounded-2xl">
                             <CardContent className="p-4 flex items-center gap-3">
-                                <div className="h-10 w-10 rounded-xl bg-blue-100 flex items-center justify-center">
-                                    <Clock className="h-5 w-5 text-blue-500" />
+                                <div className="h-10 w-10 rounded-xl bg-rose-100 flex items-center justify-center">
+                                    <Heart className="h-5 w-5 text-rose-500 fill-rose-500" />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-blue-400">Total Jam</p>
-                                    <p className="text-xl font-bold text-blue-700">{isLoading ? "..." : `${totalHours}j`}</p>
+                                    <p className="text-xs text-rose-400">Streak</p>
+                                    <p className="text-xl font-bold text-rose-700">{isLoading ? "..." : `${streak} Hari`}</p>
                                 </div>
                             </CardContent>
                         </Card>
@@ -200,7 +266,7 @@ export default function DashboardPage() {
                     <Card className="border-0 shadow-lg shadow-sky-100 bg-white rounded-2xl">
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-medium text-sky-600 flex items-center gap-2">
-                                <TrendingUp className="h-4 w-4" /> Statistik Bulan Ini
+                                <TrendingUp className="h-4 w-4" /> Mari Berkembang Bersama ✨
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
@@ -214,25 +280,29 @@ export default function DashboardPage() {
                                 <span className="text-xl font-bold text-sky-700">{totalThisMonth}</span>
                             </div>
 
-                            <div className="flex items-center justify-between p-3 rounded-xl bg-blue-50">
+                            <div className="flex items-center justify-between p-3 rounded-xl bg-rose-50">
                                 <div className="flex items-center gap-3">
-                                    <div className="h-10 w-10 rounded-xl bg-blue-100 flex items-center justify-center">
-                                        <Clock className="h-5 w-5 text-blue-500" />
+                                    <div className="h-10 w-10 rounded-xl bg-rose-100 flex items-center justify-center">
+                                        <Heart className="h-5 w-5 text-rose-500 fill-rose-500" />
                                     </div>
-                                    <span className="text-sm text-blue-600">Total Jam Kerja</span>
+                                    <span className="text-sm text-rose-600">Love Streak</span>
                                 </div>
-                                <span className="text-xl font-bold text-blue-700">{totalHours}j</span>
+                                <span className="text-xl font-bold text-rose-700">{streak} Hari!</span>
                             </div>
 
                             <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-50">
                                 <div className="flex items-center gap-3">
                                     <div className="h-10 w-10 rounded-xl bg-emerald-100 flex items-center justify-center">
-                                        <TrendingUp className="h-5 w-5 text-emerald-500" />
+                                        <SparklesIcon className="h-5 w-5 text-emerald-500" />
                                     </div>
-                                    <span className="text-sm text-emerald-600">Catatan Hari Ini</span>
+                                    <span className="text-sm text-emerald-600">Terisi Hari Ini</span>
                                 </div>
                                 <span className="text-xl font-bold text-emerald-700">{todayCount}</span>
                             </div>
+
+                            <p className="text-[10px] text-sky-400 text-center italic mt-2">
+                                "Kamu konsisten banget, Sayang! Bangga deh! 💕"
+                            </p>
                         </CardContent>
                     </Card>
 
@@ -267,11 +337,14 @@ export default function DashboardPage() {
                                         >
                                             <div className="flex items-start justify-between">
                                                 <div className="flex-1 min-w-0">
-                                                    <p className="text-sm font-medium text-sky-800 truncate">
-                                                        {item.nama_kegiatan}
-                                                    </p>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-lg">{item.mood ? moodEmojis[item.mood] : "😊"}</span>
+                                                        <p className="text-sm font-medium text-sky-800 truncate">
+                                                            {item.nama_kegiatan}
+                                                        </p>
+                                                    </div>
                                                     {item.jam_mulai && item.jam_selesai && (
-                                                        <p className="text-xs text-sky-400 mt-0.5">
+                                                        <p className="text-xs text-sky-400 mt-0.5 ml-7">
                                                             {item.jam_mulai} - {item.jam_selesai}
                                                         </p>
                                                     )}

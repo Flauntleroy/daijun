@@ -20,6 +20,7 @@ export async function createLaporan(formData: FormData) {
         volume: formData.get("volume") as string,
         satuan: formData.get("satuan") as string,
         hasil: formData.get("hasil") as string,
+        mood: formData.get("mood") as string,
     };
 
     const validation = laporanSchema.safeParse(rawData);
@@ -36,6 +37,7 @@ export async function createLaporan(formData: FormData) {
     const volume = data.volume;
     const satuan = data.satuan;
     const hasil = data.hasil;
+    const mood = data.mood;
 
     // Calculate duration in minutes if both times are provided
     let durasi_menit: number | null = null;
@@ -48,8 +50,8 @@ export async function createLaporan(formData: FormData) {
 
     try {
         await sql`
-      INSERT INTO laporan_harian (user_id, tanggal, nama_kegiatan, jam_mulai, jam_selesai, durasi_menit, volume, satuan, hasil)
-      VALUES (${parseInt(session.user.id)}, ${tanggal}, ${nama_kegiatan}, ${jam_mulai || null}, ${jam_selesai || null}, ${durasi_menit}, ${volume || null}, ${satuan || null}, ${hasil || null})
+      INSERT INTO laporan_harian (user_id, tanggal, nama_kegiatan, jam_mulai, jam_selesai, durasi_menit, volume, satuan, hasil, mood)
+      VALUES (${parseInt(session.user.id)}, ${tanggal}, ${nama_kegiatan}, ${jam_mulai || null}, ${jam_selesai || null}, ${durasi_menit}, ${volume || null}, ${satuan || null}, ${hasil || null}, ${mood || null})
     `;
 
         revalidatePath("/dashboard/laporan");
@@ -75,6 +77,7 @@ export async function updateLaporan(id: number, formData: FormData) {
         volume: formData.get("volume") as string,
         satuan: formData.get("satuan") as string,
         hasil: formData.get("hasil") as string,
+        mood: formData.get("mood") as string,
     };
 
     const validation = laporanSchema.safeParse(rawData);
@@ -83,7 +86,7 @@ export async function updateLaporan(id: number, formData: FormData) {
         return { error: firstError?.message || "Validasi gagal" };
     }
 
-    const { tanggal, nama_kegiatan, jam_mulai, jam_selesai, volume, satuan, hasil } = validation.data;
+    const { tanggal, nama_kegiatan, jam_mulai, jam_selesai, volume, satuan, hasil, mood } = validation.data;
 
     let durasi_menit: number | null = null;
     if (jam_mulai && jam_selesai) {
@@ -104,6 +107,7 @@ export async function updateLaporan(id: number, formData: FormData) {
           volume = ${volume || null}, 
           satuan = ${satuan || null}, 
           hasil = ${hasil || null},
+          mood = ${mood || null},
           updated_at = CURRENT_TIMESTAMP
       WHERE id = ${id} AND user_id = ${parseInt(session.user.id)}
     `;

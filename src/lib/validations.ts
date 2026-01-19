@@ -13,6 +13,7 @@ export const laporanSchema = z.object({
     volume: z.coerce.number().optional(),
     satuan: z.string().optional(),
     hasil: z.string().optional(),
+    mood: z.string().optional(),
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;

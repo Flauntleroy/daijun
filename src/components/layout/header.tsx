@@ -6,6 +6,8 @@ import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { Sparkles, Bell, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
 
 const motivationalQuotes = [
     { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
@@ -126,15 +128,24 @@ export function Header() {
                         </div>
                     </div>
 
-                    {/* Right side - Notification */}
-                    <div className="hidden md:flex items-center gap-2 flex-shrink-0">
+                    {/* Right side - Profile & Notification */}
+                    <div className="flex items-center gap-3 flex-shrink-0">
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="h-10 w-10 rounded-xl text-sky-400 hover:bg-sky-50 hover:text-sky-600"
+                            className="hidden md:flex h-10 w-10 rounded-xl text-sky-400 hover:bg-sky-50 hover:text-sky-600"
                         >
                             <Bell className="h-5 w-5" />
                         </Button>
+
+                        <Link href="/dashboard/profile">
+                            <Avatar className="h-10 w-10 border-2 border-white shadow-md shadow-sky-100 hover:scale-105 transition-transform cursor-pointer">
+                                <AvatarImage src={session?.user?.image || ""} className="object-cover" />
+                                <AvatarFallback className="bg-gradient-to-br from-sky-400 to-blue-500 text-white font-medium">
+                                    {firstName.charAt(0)}
+                                </AvatarFallback>
+                            </Avatar>
+                        </Link>
                     </div>
                 </div>
             </div>

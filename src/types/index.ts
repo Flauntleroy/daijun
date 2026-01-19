@@ -3,6 +3,7 @@ export interface User {
     username: string;
     password_hash: string;
     name: string;
+    image_url?: string | null;
     created_at: Date;
 }
 
@@ -17,6 +18,7 @@ export interface LaporanHarian {
     volume: number | null;
     satuan: string | null;
     hasil: string | null;
+    mood: string | null;
     file_url: string | null;
     file_name: string | null;
     created_at: Date;
@@ -31,6 +33,7 @@ export interface LaporanFormData {
     volume?: number;
     satuan?: string;
     hasil?: string;
+    mood?: string;
 }
 
 export interface LaporanFilter {

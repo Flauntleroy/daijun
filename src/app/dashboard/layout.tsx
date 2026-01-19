@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { SessionProvider } from "next-auth/react";
 import { Sidebar, Header } from "@/components/layout";
+import { SparklesBackground } from "@/components/ui/sparkles-background";
 
 export default async function DashboardLayout({
     children,
@@ -18,6 +19,7 @@ export default async function DashboardLayout({
         <SessionProvider session={session}>
             <div className="min-h-screen bg-gradient-to-br from-sky-50 via-blue-50 to-white">
                 <Sidebar />
+                <SparklesBackground />
                 {/* Responsive margin for different sidebar widths */}
                 <div className="md:ml-20 lg:ml-64">
                     <Header />

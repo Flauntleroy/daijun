@@ -4,8 +4,9 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { format, parse } from "date-fns";
 import { id } from "date-fns/locale";
-import { CalendarIcon, Loader2, ArrowLeft, Sparkles } from "lucide-react";
+import { CalendarIcon, Loader2, ArrowLeft, Sparkles, Heart } from "lucide-react";
 import { toast } from "sonner";
+import confetti from "canvas-confetti";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +23,25 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { createLaporan, updateLaporan } from "@/app/actions/laporan";
 import type { LaporanHarian } from "@/types";
+
+const moodOptions = [
+    { label: "Senang", emoji: "😊", value: "happy", color: "bg-amber-50 text-amber-600 border-amber-200" },
+    { label: "Semangat", emoji: "💪", value: "productive", color: "bg-sky-50 text-sky-600 border-sky-200" },
+    { label: "Capek", emoji: "😴", value: "tired", color: "bg-purple-50 text-purple-600 border-purple-200" },
+    { label: "Bersyukur", emoji: "😇", value: "grateful", color: "bg-rose-50 text-rose-600 border-rose-200" },
+    { label: "Pusing", emoji: "🤯", value: "stressed", color: "bg-orange-50 text-orange-600 border-orange-200" },
+];
+
+const loveNotes = [
+    "Kamu hebat banget hari ini, Sayang! 💕",
+    "Kerjaan selesai, waktunya istirahat ya manis... ✨",
+    "Bangga banget sama kamu, tetap semangat ya! 💖",
+    "Istirahat yang cukup ya, kamu sudah melakukan yang terbaik! 😇",
+    "Selesaikan hari ini dengan senyuman, I love you! ❤️",
+    "Kamu itu inspirasi aku setiap hari. Hebat! 🌟",
+    "Capek ya? Sini aku peluk virtual dulu... 🤗",
+    "Setiap langkah kecilmu itu berarti besar. Proud of you! 🌈",
+];
 
 interface FormLaporanProps {
     initialData?: LaporanHarian;
@@ -41,6 +61,7 @@ export function FormLaporan({ initialData, isEdit = false }: FormLaporanProps) {
 
     const [isLoading, setIsLoading] = useState(false);
     const [date, setDate] = useState<Date | undefined>(initialDate);
+    const [selectedMood, setSelectedMood] = useState<string>(initialData?.mood || "happy");
 
     async function handleSubmit(formData: FormData) {
         if (!date) {
@@ -50,6 +71,7 @@ export function FormLaporan({ initialData, isEdit = false }: FormLaporanProps) {
 
         setIsLoading(true);
         formData.set("tanggal", format(date, "yyyy-MM-dd"));
+        formData.set("mood", selectedMood);
 
         try {
             const result = isEdit && initialData
@@ -59,7 +81,20 @@ export function FormLaporan({ initialData, isEdit = false }: FormLaporanProps) {
             if (result.error) {
                 toast.error(result.error);
             } else {
-                toast.success(isEdit ? "Catatan diupdate! ✨" : "Catatan tersimpan! 💕");
+                // Trigger Confetti!
+                confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ["#38bdf8", "#0ea5e9", "#f43f5e", "#fbbf24"]
+                });
+
+                const randomNote = loveNotes[Math.floor(Math.random() * loveNotes.length)];
+                toast.success(randomNote, {
+                    duration: 5000,
+                    icon: "💖",
+                });
+
                 router.push("/dashboard");
                 router.refresh();
             }
@@ -95,6 +130,34 @@ export function FormLaporan({ initialData, isEdit = false }: FormLaporanProps) {
             <Card className="border-0 shadow-lg shadow-sky-100 bg-white rounded-3xl overflow-hidden">
                 <CardContent className="p-5 lg:p-8">
                     <form action={handleSubmit} className="space-y-5 lg:space-y-6">
+                        {/* Mood Selector */}
+                        <div className="space-y-3 p-4 rounded-3xl bg-sky-50/50 border border-sky-100">
+                            <Label className="text-sky-700 text-sm font-medium flex items-center gap-2">
+                                <Heart className="h-4 w-4 text-rose-400 fill-rose-400" />
+                                Gimana perasaanmu hari ini?
+                            </Label>
+                            <div className="flex flex-wrap gap-2">
+                                {moodOptions.map((mood) => (
+                                    <button
+                                        key={mood.value}
+                                        type="button"
+                                        onClick={() => setSelectedMood(mood.value)}
+                                        className={cn(
+                                            "flex items-center gap-2 px-4 py-2 rounded-2xl text-sm transition-all border",
+                                            selectedMood === mood.value
+                                                ? cn(mood.color, "ring-2 ring-offset-2 ring-sky-200 scale-105")
+                                                : "bg-white text-sky-400 border-transparent hover:border-sky-100"
+                                        )}
+                                    >
+                                        <span className="text-lg">{mood.emoji}</span>
+                                        <span className={selectedMood === mood.value ? "font-semibold" : ""}>
+                                            {mood.label}
+                                        </span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
                         {/* Date - Hidden if from calendar */}
                         {!dateParam && (
                             <div className="space-y-2">

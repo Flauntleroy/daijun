@@ -16,9 +16,10 @@ export async function updateProfile(formData: FormData) {
     const currentImageUrl = formData.get("currentImageUrl") as string;
 
     try {
-        let imageUrl = currentImageUrl;
+        let imageUrl = currentImageUrl || null;
 
-        if (imageFile && imageFile.size > 0) {
+        // Only process image if a file was actually uploaded
+        if (imageFile && typeof imageFile === 'object' && imageFile.size > 0) {
             // Delete old photo if exists and is from blob
             if (currentImageUrl && currentImageUrl.includes("public.blob.vercel-storage.com")) {
                 try {

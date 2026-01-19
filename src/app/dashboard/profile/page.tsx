@@ -18,11 +18,17 @@ export default function ProfilePage() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [previewUrl, setPreviewUrl] = useState<string | null>(session?.user?.image || null);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     async function handleSubmit(formData: FormData) {
         setIsLoading(true);
         formData.append("currentImageUrl", session?.user?.image || "");
+
+        // Manually append the file if selected
+        if (selectedFile) {
+            formData.set("image", selectedFile);
+        }
 
         try {
             const result = await updateProfile(formData);
@@ -51,6 +57,7 @@ export default function ProfilePage() {
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            setSelectedFile(file);
             const url = URL.createObjectURL(file);
             setPreviewUrl(url);
         }

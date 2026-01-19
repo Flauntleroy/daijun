@@ -1,36 +1,117 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Laporan Kinerja Harian
 
-## Getting Started
+Sistem penginputan Laporan Kinerja Harian menggunakan Next.js 14, shadcn/ui, dan Vercel.
 
-First, run the development server:
+## Fitur
+
+- ✅ Form input lengkap (tanggal, kegiatan, jam, volume, hasil, file)
+- ✅ CRUD laporan (Create, Read, Update, Delete)
+- ✅ Filter dan pencarian
+- ✅ Export ke CSV dan PDF
+- ✅ Upload file (Vercel Blob)
+- ✅ Autentikasi (username/password)
+- ✅ Responsive design
+
+## Tech Stack
+
+- **Framework**: Next.js 14+ (App Router)
+- **UI**: shadcn/ui + Tailwind CSS
+- **Database**: Vercel Postgres
+- **Storage**: Vercel Blob
+- **Auth**: NextAuth.js
+
+## Deployment ke Vercel
+
+### 1. Push ke GitHub
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git add .
+git commit -m "Initial commit"
+git push origin main
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Connect ke Vercel
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Buka [vercel.com](https://vercel.com) dan login
+2. Click "Add New" → "Project"
+3. Import repository dari GitHub
+4. Click "Deploy"
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 3. Setup Database
 
-## Learn More
+1. Di Vercel Dashboard, buka project Anda
+2. Pergi ke tab "Storage"
+3. Click "Create Database" → "Postgres"
+4. Ikuti wizard untuk membuat database
+5. Environment variables akan otomatis ditambahkan
 
-To learn more about Next.js, take a look at the following resources:
+### 4. Setup Blob Storage
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Di tab "Storage" yang sama
+2. Click "Create" → "Blob"
+3. Token akan otomatis ditambahkan ke environment variables
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 5. Tambah Environment Variables
 
-## Deploy on Vercel
+Di Vercel Dashboard → Settings → Environment Variables:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+NEXTAUTH_SECRET=<generate-random-string>
+NEXTAUTH_URL=https://your-app.vercel.app
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Generate secret dengan: `openssl rand -base64 32`
+
+### 6. Setup Database Schema
+
+1. Di Vercel Dashboard, buka Postgres database
+2. Pergi ke tab "Query"
+3. Copy dan jalankan isi file `src/lib/db-schema.sql`
+4. Atau gunakan endpoint `/api/seed` untuk auto-create tables
+
+### 7. Redeploy
+
+Setelah setup selesai, trigger redeploy dari Vercel Dashboard.
+
+## Development Lokal
+
+```bash
+# Install dependencies
+npm install
+
+# Copy environment variables
+cp .env.example .env.local
+# Edit .env.local dengan kredensial Anda
+
+# Run development server
+npm run dev
+```
+
+Buka [http://localhost:3000](http://localhost:3000)
+
+## Login Default
+
+- **Username**: admin
+- **Password**: admin123
+
+> ⚠️ Ganti password default setelah deployment!
+
+## Struktur Project
+
+```
+src/
+├── app/
+│   ├── api/auth/          # NextAuth API
+│   ├── actions/           # Server Actions
+│   ├── dashboard/         # Protected pages
+│   └── login/             # Auth page
+├── components/
+│   ├── ui/                # shadcn/ui components
+│   ├── layout/            # Sidebar, Header
+│   └── laporan/           # Form, Table, Filter
+└── lib/                   # Utilities
+```
+
+## License
+
+MIT

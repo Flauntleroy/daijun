@@ -128,16 +128,7 @@ export default function DashboardPage() {
                 {/* Left Column - Calendar (Takes 2 cols on desktop) */}
                 <div className="lg:col-span-2 space-y-6">
                     {/* Self Care Widget */}
-                    <Card className="border-0 shadow-lg shadow-sky-100 bg-white/60 backdrop-blur-md rounded-3xl overflow-hidden animate-in fade-in slide-in-from-top-4 duration-700">
-                        <CardContent className="p-4 md:p-6 flex items-center gap-4">
-                            <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 bg-white shadow-sm", tip.color)}>
-                                <tip.icon className="h-6 w-6" />
-                            </div>
-                            <p className="text-sky-800 font-medium text-sm md:text-base italic">
-                                "{tip.text}"
-                            </p>
-                        </CardContent>
-                    </Card>
+
 
                     {/* Calendar Card */}
                     <Card className="border-0 shadow-lg shadow-sky-100 bg-white rounded-3xl overflow-hidden">
@@ -266,7 +257,7 @@ export default function DashboardPage() {
                     <Card className="border-0 shadow-lg shadow-sky-100 bg-white rounded-2xl">
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm font-medium text-sky-600 flex items-center gap-2">
-                                <TrendingUp className="h-4 w-4" /> Mari Berkembang Bersama ✨
+                                <TrendingUp className="h-4 w-4" /> Statistik
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
@@ -280,14 +271,14 @@ export default function DashboardPage() {
                                 <span className="text-xl font-bold text-sky-700">{totalThisMonth}</span>
                             </div>
 
-                            <div className="flex items-center justify-between p-3 rounded-xl bg-rose-50">
+                            <div className="flex items-center justify-between p-3 rounded-xl bg-blue-50">
                                 <div className="flex items-center gap-3">
-                                    <div className="h-10 w-10 rounded-xl bg-rose-100 flex items-center justify-center">
-                                        <Heart className="h-5 w-5 text-rose-500 fill-rose-500" />
+                                    <div className="h-10 w-10 rounded-xl bg-blue-100 flex items-center justify-center">
+                                        <Clock className="h-5 w-5 text-blue-500" />
                                     </div>
-                                    <span className="text-sm text-rose-600">Love Streak</span>
+                                    <span className="text-sm text-blue-600">Total Jam Kerja</span>
                                 </div>
-                                <span className="text-xl font-bold text-rose-700">{streak} Hari!</span>
+                                <span className="text-xl font-bold text-blue-700">{totalHours}j</span>
                             </div>
 
                             <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-50">
@@ -299,10 +290,6 @@ export default function DashboardPage() {
                                 </div>
                                 <span className="text-xl font-bold text-emerald-700">{todayCount}</span>
                             </div>
-
-                            <p className="text-[10px] text-sky-400 text-center italic mt-2">
-                                "Kamu konsisten banget, Sayang! Bangga deh! 💕"
-                            </p>
                         </CardContent>
                     </Card>
 
@@ -372,6 +359,17 @@ export default function DashboardPage() {
                             </CardContent>
                         </Card>
                     </Link>
+                    <br></br>
+                    <Card className="border-0 shadow-lg shadow-sky-100 bg-white/60 backdrop-blur-md rounded-3xl overflow-hidden animate-in fade-in slide-in-from-top-4 duration-700">
+                        <CardContent className="p-4 md:p-6 flex items-center gap-4">
+                            <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 bg-white shadow-sm", tip.color)}>
+                                <tip.icon className="h-6 w-6" />
+                            </div>
+                            <p className="text-sky-800 font-medium text-sm md:text-base italic">
+                                "{tip.text}"
+                            </p>
+                        </CardContent>
+                    </Card>
                 </div>
             </div>
 

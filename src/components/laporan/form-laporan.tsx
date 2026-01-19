@@ -134,7 +134,7 @@ export function FormLaporan({ initialData, isEdit = false }: FormLaporanProps) {
                         <div className="space-y-3 p-4 rounded-3xl bg-sky-50/50 border border-sky-100">
                             <Label className="text-sky-700 text-sm font-medium flex items-center gap-2">
                                 <Heart className="h-4 w-4 text-rose-400 fill-rose-400" />
-                                Gimana perasaanmu hari ini?
+                                Mood hari ini
                             </Label>
                             <div className="flex flex-wrap gap-2">
                                 {moodOptions.map((mood) => (
@@ -190,7 +190,7 @@ export function FormLaporan({ initialData, isEdit = false }: FormLaporanProps) {
 
                         {/* Activity Name */}
                         <div className="space-y-2">
-                            <Label className="text-sky-700 text-sm">Kegiatan apa hari ini? </Label>
+                            <Label className="text-sky-700 text-sm"> Kegiatan </Label>
                             <Input
                                 name="nama_kegiatan"
                                 placeholder="Contoh: Rapat dengan tim marketing..."
@@ -246,7 +246,7 @@ export function FormLaporan({ initialData, isEdit = false }: FormLaporanProps) {
 
                         {/* Result */}
                         <div className="space-y-2">
-                            <Label className="text-sky-700 text-sm">Hasilnya gimana? </Label>
+                            <Label className="text-sky-700 text-sm">Hasil Kegiatan </Label>
                             <Textarea
                                 name="hasil"
                                 placeholder="Ceritakan hasil kegiatanmu..."

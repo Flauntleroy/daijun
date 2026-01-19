@@ -19,7 +19,7 @@ const navItems = [
     { href: "/dashboard", label: "Beranda", icon: Home },
     { href: "/dashboard/laporan", label: "Catatan", icon: CalendarDays },
     { href: "/dashboard/laporan/new", label: "Tulis Baru", icon: PenLine },
-    { href: "/dashboard/profile", label: "Profil Sayang", icon: User },
+    { href: "/dashboard/profile", label: "Profil", icon: User },
 ];
 
 export function Sidebar() {

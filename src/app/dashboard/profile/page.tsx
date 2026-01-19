@@ -38,11 +38,11 @@ export default function ProfilePage() {
                         image: result.imageUrl
                     }
                 });
-                toast.success("Profil Sayang sudah diupdate! 💕");
+                toast.success("Profil sudah diupdate! ");
                 router.refresh();
             }
         } catch (error) {
-            toast.error("Gagal update profil 😢");
+            toast.error("Gagal update profil ");
         } finally {
             setIsLoading(false);
         }
@@ -69,7 +69,7 @@ export default function ProfilePage() {
                     <ArrowLeft className="h-5 w-5" />
                 </Button>
                 <div>
-                    <h1 className="text-xl font-semibold text-sky-800">Profil Sayang</h1>
+                    <h1 className="text-xl font-semibold text-sky-800">Profil</h1>
                     <p className="text-sm text-sky-400">Atur profil pribadimu di sini ✨</p>
                 </div>
             </div>

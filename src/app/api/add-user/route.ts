@@ -14,7 +14,7 @@ export async function GET() {
 
         await sql`
       INSERT INTO users (username, password_hash, name)
-      VALUES ('mi', ${hashedPassword}, 'Mimi Sayang')
+      VALUES ('mi', ${hashedPassword}, 'Mimi ')
     `;
 
         return NextResponse.json({ success: true, message: "User 'mi' created!" });
